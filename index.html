@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>DriveSync 🚀 // Future Uplink</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    
+    <link rel="icon" href="https://fonts.gstatic.com/s/i/materialicons/cloud_upload/v15/24px.svg">
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <canvas id="stars"></canvas>
+
+    <div id="zenOverlay">
+        <h1 class="zen-text">ZEN MODE</h1>
+        <p class="zen-sub">SYSTEM IDLE // FOCUS</p>
+        <button id="exitZenBtn" class="btn-exit-zen">EXIT VOID</button>
+    </div>
+
+    <div id="splash">
+        <div class="splash-content">
+            <h1>DRIVESYNC</h1>
+            <p style="text-align:center; color: var(--primary); letter-spacing: 5px; font-size: 0.8rem; margin-top: 10px; margin-bottom: 30px;">
+                <i class="fas fa-shield-alt"></i> IDENTITY VERIFICATION REQUIRED
+            </p>
+            
+            <button id="authBtn" class="btn-start" disabled>
+                <i class="fas fa-circle-notch fa-spin"></i> SYSTEM LOADING...
+            </button>
+            
+            <p id="loginStatus" style="margin-top: 20px; font-size: 0.8rem; color: #666; letter-spacing: 2px; height: 20px; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <audio id="startupSound" src="sound/startup.mp3" preload="auto"></audio>
+    <audio id="zenMusic" src="sound/zen.mp3" loop preload="auto"></audio>
+
+    <div class="container" id="tiltCard">
+        <header>
+            <div id="userProfile" class="user-profile hidden">
+                <div class="avatar-container">
+                    <img id="userAvatar" src="" alt="User" />
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="user-details">
+                    <span class="user-label">OPERATOR // ONLINE</span>
+                    <span id="userName" class="user-name">UNKNOWN</span>
+                </div>
+                <button id="logoutBtn" class="btn-logout" title="TERMINATE UPLINK">
+                    <i class="fas fa-power-off"></i>
+                </button>
+            </div>
+
+            <h1><i class="fas fa-rocket"></i> DriveSync</h1>
+            <p class="subtitle">SECURE DATA TRANSMISSION MODULE</p>
+        </header>
+
+        <main>
+            <div class="form-group">
+                <label>📁 INPUT SOURCE DATA</label>
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" id="fileInput" />
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>INITIATE TRANSFER<br><span style="font-size:0.7em; color:#888">Drag & Drop or Click to Browse</span></p>
+                    <div id="preview" class="file-info"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="customName">✏️ FILENAME ALIAS (OPTIONAL)</label>
+                <input type="text" id="customName" placeholder="e.g. Classified_Project_Alpha.pdf" autocomplete="off" />
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    <label for="folderSelect">📂 TARGET NODE (FOLDER)</label>
+                    <select id="folderSelect">
+                        <option value="">-- SYSTEM READY --</option>
+                    </select>
+                </div>
+                <button id="refreshFolders" class="btn secondary small" title="Refresh Directory">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                <div style="flex-grow: 1;">
+                    <label for="newFolderName">🆕 CREATE NEW NODE (FOLDER)</label>
+                    <input type="text" id="newFolderName" placeholder="Enter New Folder Name" />
+                </div>
+                <button id="createFolder" class="btn secondary small" title="Create Folder">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <button id="uploadBtn" class="btn primary">
+                <i class="fas fa-upload"></i> INITIATE UPLOAD
+            </button>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button id="toggleDark" class="btn secondary" style="font-size: 0.8rem;">
+                    <i class="fas fa-palette"></i> VISUAL MODE
+                </button>
+                <button id="zenToggle" class="btn secondary" style="font-size: 0.8rem;">
+                    <i class="fas fa-spa"></i> ZEN MODE
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="music-player">
+                <audio controls loop>
+                    <source src="music/lagu.mp3" type="audio/mpeg" />
+                    Audio module offline.
+                </audio>
+            </div>
+            
+            <div class="cyber-badge">
+                <div class="status-dot"></div>
+                <span class="role">ARCHITECT:</span>
+                <span class="name">SI DHOELL</span>
+                <span class="separator">//</span>
+                <span class="version">V.4.0 ULTIMATE</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script src="script.js"></script>
+
+</body>
+</html>

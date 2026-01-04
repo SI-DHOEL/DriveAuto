@@ -1,0 +1,778 @@
+/* =========================================
+   1. IMPORTS & FONTS
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+/* =========================================
+   2. VARIABLES & RESET
+   ========================================= */
+:root {
+  /* Default Theme (Cyberpunk Cyan) */
+  --primary: #00f0ff;       
+  --secondary: #7000ff;     
+  --bg-dark-1: #050510;
+  --bg-dark-2: #100b20;
+  
+  /* Glassmorphism System */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-glow: 0 0 20px rgba(0, 240, 255, 0.15);
+  
+  /* Text */
+  --text-main: #e0e0e0;
+  --text-muted: #888;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* =========================================
+   3. BODY & THEMES
+   ========================================= */
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background: radial-gradient(circle at center, var(--bg-dark-2) 0%, var(--bg-dark-1) 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  transition: background 0.8s ease, color 0.5s ease; /* Transisi Halus saat Ganti Tema */
+  position: relative; 
+}
+
+/* Scrollbar Keren */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark-1); }
+::-webkit-scrollbar-thumb { 
+  background: linear-gradient(var(--primary), var(--secondary)); 
+  border-radius: 10px;
+}
+
+/* Zen Mode (Hue Shift - Legacy, sekarang pakai Boss Mode) */
+body.zen {
+  filter: hue-rotate(45deg) contrast(1.1);
+}
+body.light-mode {
+    background: #e0e0e0;
+    color: #333;
+    --glass-bg: rgba(0,0,0,0.05);
+    --glass-border: rgba(0,0,0,0.1);
+}
+
+/* =========================================
+   4. BACKGROUND EFFECTS (LAYERING)
+   ========================================= */
+
+/* Layer 0: Canvas Bintang */
+#stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+/* Layer 1: Vignette */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 50%, #000 130%);
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+/* Layer 2: Scanlines */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+/* =========================================
+   5. SPLASH SCREEN & AUTH BUTTON
+   ========================================= */
+#splash {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.splash-content h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  background: linear-gradient(90deg, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulseTitle 2s infinite;
+  margin-bottom: 0;
+}
+
+@keyframes pulseTitle {
+  0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--primary); }
+  50% { opacity: 0.5; text-shadow: 0 0 5px var(--primary); }
+}
+
+.btn-start {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 15px 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); /* Fallback shadow */
+    position: relative;
+    overflow: hidden;
+    animation: pulseBtn 2s infinite;
+}
+
+.btn-start:hover:not(:disabled) {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 30px var(--primary); /* Glow dinamis ikut tema */
+    transform: scale(1.05);
+}
+
+.btn-start:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+@keyframes pulseBtn {
+    0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.5); } /* Fallback */
+    70% { box-shadow: 0 0 0 20px rgba(0, 240, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
+}
+
+/* =========================================
+   6. MAIN CONTAINER (GLASS CARD)
+   ========================================= */
+.container {
+  position: relative;
+  z-index: 10;
+  width: 90%;
+  max-width: 520px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2.8rem;
+  box-shadow: var(--glass-glow); /* Shadow dinamis */
+  
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  transition: transform 0.1s ease-out, box-shadow 0.5s ease; /* Transisi shadow tema */
+  
+  opacity: 0;
+  animation: fadeInUp 1s ease forwards 0.5s;
+}
+
+/* Efek Kilatan Cahaya Diagonal */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+  pointer-events: none;
+}
+.container:hover::before {
+  left: 100%;
+  transition: 0.7s;
+}
+
+/* =========================================
+   7. HEADER & USER PROFILE
+   ========================================= */
+header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.2rem;
+  text-align: center;
+  background: linear-gradient(90deg, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Shadow text netral */
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+header .subtitle {
+  text-align: center;
+  color: var(--primary);
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* User Profile Header Style */
+.user-profile {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--primary); /* Warna border kiri ikut tema */
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+    width: 100%;
+    animation: slideIn 0.8s ease;
+}
+
+.user-profile:hover {
+    box-shadow: 0 0 25px var(--primary); /* Shadow hover ikut tema */
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.avatar-container {
+    position: relative;
+    margin-right: 15px;
+}
+
+.avatar-container img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    object-fit: cover;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+.online-indicator {
+    position: absolute;
+    bottom: 2px;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #00ff88;
+    border-radius: 50%;
+    border: 2px solid #000;
+    box-shadow: 0 0 5px #00ff88;
+    animation: blink 2s infinite;
+}
+
+.user-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-label {
+    font-size: 0.65rem;
+    color: #888;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.user-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 50, 50, 0.3);
+    color: #ff4d4d;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: #ff4d4d;
+    color: #fff;
+    box-shadow: 0 0 15px #ff4d4d;
+    transform: rotate(90deg);
+}
+
+/* =========================================
+   8. FORM ELEMENTS
+   ========================================= */
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+label {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  color: var(--primary);
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+input[type="text"], select {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px var(--primary);
+}
+
+/* Drag & Drop Zone */
+.drop-zone {
+  width: 100%;
+  min-height: 120px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 20px;
+}
+
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.05); /* Netral, jangan pakai primary biar ga silau */
+  box-shadow: inset 0 0 20px var(--primary);
+}
+
+.drop-zone i {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+.drop-zone p {
+  color: #aaa;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.drop-zone input[type="file"] {
+  position: absolute;
+  width: 100%; height: 100%;
+  top: 0; left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+#preview { margin-top: 5px; width: 100%; }
+
+/* =========================================
+   9. BUTTONS
+   ========================================= */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Shadow netral */
+}
+
+.btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px var(--primary); /* Glow tema */
+}
+
+.btn.primary:disabled {
+  background: #333;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn.secondary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+
+.btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px var(--primary);
+}
+
+.btn.small {
+  width: auto;
+  padding: 10px 15px;
+  margin-left: 5px;
+}
+
+/* =========================================
+   10. PROGRESS BAR
+   ========================================= */
+.progress-container {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  height: 6px;
+  margin-top: 15px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
+  box-shadow: 0 0 10px var(--primary);
+  border-radius: 10px;
+  transition: width 0.2s ease;
+}
+
+/* =========================================
+   11. FOOTER
+   ========================================= */
+footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.music-player {
+  margin-top: 15px;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 15px;
+}
+
+audio {
+  width: 100%;
+  height: 25px;
+  opacity: 0.6;
+  filter: invert(1); 
+}
+
+/* Cyber Badge Style */
+.cyber-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    padding: 8px 20px;
+    border-radius: 50px;
+    margin-top: 15px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-badge:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 20px var(--primary);
+    transform: translateY(-2px);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.role {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    color: #888;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+    background: linear-gradient(90deg, var(--primary), #fff, var(--secondary));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientMove 3s linear infinite;
+    letter-spacing: 1px;
+}
+
+@keyframes gradientMove { to { background-position: 200% center; } }
+
+.separator { color: var(--glass-border); font-weight: bold; }
+
+.version {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--primary);
+    font-size: 0.8rem;
+    background: rgba(0, 240, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+/* =========================================
+   12. UTILITIES & RESPONSIVE
+   ========================================= */
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .container { padding: 1.5rem; width: 95%; }
+  header h1 { font-size: 1.8rem; }
+  .drop-zone { min-height: 100px; }
+  .form-group { flex-direction: column; align-items: stretch !important; }
+  .btn.small { width: 100%; margin-left: 0; margin-top: 5px; }
+  
+  .cyber-badge { padding: 6px 15px; gap: 8px; }
+  .role { font-size: 0.7rem; }
+  .name { font-size: 0.8rem; }
+}
+
+/* =========================================
+   13. MULTIVERSE THEMES (10 VARIANTS)
+   ========================================= */
+
+/* 1. Default (Cyberpunk Cyan) - Sudah ada di :root */
+
+/* 2. The Matrix (Hacker Green) */
+body.theme-matrix {
+    --primary: #00ff41;
+    --secondary: #008f11;
+    --bg-dark-1: #000000;
+    --bg-dark-2: #0d0208;
+    --text-main: #e0e0e0;
+}
+
+/* 3. Red Alert (Crimson/Danger) */
+body.theme-crimson {
+    --primary: #ff0000;
+    --secondary: #8a0000;
+    --bg-dark-1: #1a0000;
+    --bg-dark-2: #2b0000;
+}
+
+/* 4. Deep Ocean (Blue/Teal) */
+body.theme-ocean {
+    --primary: #00ffff;
+    --secondary: #0077be;
+    --bg-dark-1: #001f3f;
+    --bg-dark-2: #003366;
+}
+
+/* 5. Royal Gold (Luxury/Sultan) */
+body.theme-gold {
+    --primary: #ffd700;
+    --secondary: #b8860b;
+    --bg-dark-1: #1c1c1c;
+    --bg-dark-2: #2e2e2e;
+    --text-main: #fff8dc;
+}
+
+/* 6. Neon City (Pink/Purple) */
+body.theme-neon {
+    --primary: #ff00ff;
+    --secondary: #bd00ff;
+    --bg-dark-1: #1a0b2e;
+    --bg-dark-2: #2d1b4e;
+}
+
+/* 7. Sunset Drive (Orange/Yellow) */
+body.theme-sunset {
+    --primary: #ff9900;
+    --secondary: #ff5500;
+    --bg-dark-1: #291400;
+    --bg-dark-2: #3d1e00;
+}
+
+/* 8. Monochrome (Black/White - Minimalist) */
+body.theme-mono {
+    --primary: #ffffff;
+    --secondary: #888888;
+    --bg-dark-1: #000000;
+    --bg-dark-2: #111111;
+}
+
+/* 9. Toxic Waste (Lime/Purple - Joker Vibes) */
+body.theme-toxic {
+    --primary: #ccff00;
+    --secondary: #9900ff;
+    --bg-dark-1: #0f1a05;
+    --bg-dark-2: #1a0f2e;
+}
+
+/* 10. Cotton Candy (Pastel Soft) */
+body.theme-pastel {
+    --primary: #ffb7b2;
+    --secondary: #b5ead7;
+    --bg-dark-1: #2a2a2a;
+    --bg-dark-2: #353535;
+}
+
+/* =========================================
+   14. BOSS LEVEL ZEN MODE UI
+   ========================================= */
+
+/* Sembunyikan Interface Utama saat Zen Mode */
+body.zen-active .container,
+body.zen-active #splash {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9);
+    filter: blur(10px);
+    transition: all 1s ease;
+}
+
+/* Tampilkan Overlay Zen */
+#zenOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    background: radial-gradient(circle, transparent 0%, #000 90%); /* Vignette Extreme */
+}
+
+body.zen-active #zenOverlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.zen-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    color: var(--primary);
+    text-shadow: 0 0 30px var(--primary);
+    animation: breathe 6s infinite ease-in-out;
+    letter-spacing: 15px;
+    margin: 0;
+}
+
+.zen-sub {
+    margin-top: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 5px;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.btn-exit-zen {
+    margin-top: 60px;
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 12px 40px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: 0.3s;
+    opacity: 0.3; /* Samar-samar biar ga ganggu */
+}
+
+.btn-exit-zen:hover {
+    background: var(--primary);
+    color: #000;
+    opacity: 1;
+    box-shadow: 0 0 30px var(--primary);
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); opacity: 0.6; text-shadow: 0 0 10px var(--primary); }
+    50% { transform: scale(1.05); opacity: 1; text-shadow: 0 0 50px var(--primary); }
+}
